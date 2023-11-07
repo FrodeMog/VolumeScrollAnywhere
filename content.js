@@ -1,5 +1,6 @@
 let currentIncrement = 0.02;
 let currentTextSize = 16;
+let currentExtensionToggle = true;
 
 let debugMode = true;
 let playerFound = false;
@@ -26,26 +27,7 @@ document.body.appendChild(tooltip);
 // Hide the tooltip when the mouse moves
 document.addEventListener('mousemove', () => {
     tooltip.style.display = 'none';
-});// Get the elements with the textColor and textSize IDs
-const textColorElement = document.getElementById('textColor');
-const textSizeElement = document.getElementById('textSize');
-
-// Set the color and font-size CSS properties based on the settings
-if (textColorElement) {
-    textColorElement.addEventListener('change', () => {
-        const textColor = textColorElement.value;
-        textColorElement.style.color = textColor;
-        browser.storage.local.set({ "textColor": textColor });
-    });
-}
-
-if (textSizeElement) {
-    textSizeElement.addEventListener('change', () => {
-        const textSize = textSizeElement.value;
-        textSizeElement.style.fontSize = `${textSize}px`;
-        browser.storage.local.set({ "textSize": textSize });
-    });
-}
+});
 
 const unmutePlayer = (player) => { //Will lag on some sites
     //debugMessage("played muted: " + player.muted);
@@ -72,6 +54,7 @@ const isMouseOverPlayer = (event, player) => {
 };
 
 const startVolumeControl = (player) => {
+    debugMessage("currentextensiontoggle: " + currentExtensionToggle);
     player.style.pointerEvents = "none";
 
     const preventScroll = (event) => {
@@ -80,9 +63,6 @@ const startVolumeControl = (player) => {
             event.stopPropagation();
         }
     };
-
-    document.addEventListener('wheel', preventScroll, { passive: false });
-    document.addEventListener('touchmove', preventScroll, { passive: false });
 
     document.addEventListener('wheel', (event) => {
         if (isMouseOverPlayer(event, player)) {
@@ -98,14 +78,17 @@ const startVolumeControl = (player) => {
                     setVolume(player, newVolume);
                 }
             }
-        //Show tooltip when scrolling
-        tooltip.style.display = 'block';
-        tooltip.style.left = `${event.clientX}px`;
-        tooltip.style.top = `${event.clientY}px`;
-        tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
-        tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
+            //Show tooltip when scrolling
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${event.clientX}px`;
+            tooltip.style.top = `${event.clientY}px`;
+            tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
+            tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
         }
     });
+
+    document.addEventListener('wheel', preventScroll, { passive: false });
+    document.addEventListener('touchmove', preventScroll, { passive: false });
 };
 
 const setVolume = (player, rawVolume) => {
@@ -118,12 +101,18 @@ const setVolume = (player, rawVolume) => {
 browser.runtime.onMessage.addListener((message) => {
     if (message.type === "incrementUpdate") {
         currentIncrement = parseFloat(message.increment) || currentIncrement;
+        debugMessage("Increment updated to: " + currentIncrement);
     }
     if (message.type === "textSizeUpdate") {
         currentTextSize = message.textSize;
+        debugMessage("Text size updated to: " + currentTextSize);
+    }
+    if (message.type === "extensionToggleUpdate") {
+        currentExtensionToggle = message.extensionToggle;
+        debugMessage("Extension toggle updated to: " + currentExtensionToggle);
+        
     }
 });
-
 
 const checkForPlayer = () => {
     debugMessage("Checking for video player...");
