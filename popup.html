@@ -26,6 +26,16 @@
             <span id="textSizeValue">16px</span>
         </div>
     </form>
+    <hr>
+    <form>
+        <div style="text-align:center;">
+            <label for="extensionToggle">Extension toggle</label>
+            <label class="switch">
+                <input type="checkbox" id="extensionToggle" name="extensionToggle" value="true" onchange="updateToggle(this.id, this.checked)">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </form>
     <script src="popup.js"></script>
 </body>
 
