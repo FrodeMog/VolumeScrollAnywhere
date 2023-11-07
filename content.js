@@ -1,5 +1,5 @@
 let currentIncrement = 0.02;
-let debugMode = false;
+let debugMode = true;
 let playerFound = false;
 let currentUrl = document.location.href;
 let observer;
@@ -10,14 +10,49 @@ const debugMessage = (message, debugModeOverwrite) => {
     }
 };
 
+// Create a new HTML element to display the text
+const tooltip = document.createElement('div');
+tooltip.style.position = 'fixed';
+tooltip.style.zIndex = '9999';
+tooltip.style.backgroundColor = 'black';
+tooltip.style.color = 'white';
+tooltip.style.padding = '5px';
+tooltip.style.borderRadius = '5px';
+tooltip.style.display = 'none';
+document.body.appendChild(tooltip);
+
+// Hide the tooltip when the mouse moves
+document.addEventListener('mousemove', () => {
+    tooltip.style.display = 'none';
+});// Get the elements with the textColor and textSize IDs
+const textColorElement = document.getElementById('textColor');
+const textSizeElement = document.getElementById('textSize');
+
+// Set the color and font-size CSS properties based on the settings
+if (textColorElement) {
+    textColorElement.addEventListener('change', () => {
+        const textColor = textColorElement.value;
+        textColorElement.style.color = textColor;
+        browser.storage.local.set({ "textColor": textColor });
+    });
+}
+
+if (textSizeElement) {
+    textSizeElement.addEventListener('change', () => {
+        const textSize = textSizeElement.value;
+        textSizeElement.style.fontSize = `${textSize}px`;
+        browser.storage.local.set({ "textSize": textSize });
+    });
+}
+
 const unmutePlayer = (player) => {
-    debugMessage("played muted: " + player.muted);
+    //debugMessage("played muted: " + player.muted);
     if (player) {
         if (player.muted) {
             debugMessage("Unmuting player.", true);
             player.muted = false;
         } else {
-            debugMessage("Player is already unmuted.");
+            //debugMessage("Player is already unmuted.");
         }
     }
 };
@@ -49,6 +84,11 @@ const startVolumeControl = (player) => {
 
     document.addEventListener('wheel', (event) => {
         if (isMouseOverPlayer(event, player)) {
+            //Show tooltip when scrolling
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${event.clientX}px`;
+            tooltip.style.top = `${event.clientY}px`;
+            tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
                     const newVolume = Math.min(1, player.volume + currentIncrement);
