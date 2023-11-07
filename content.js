@@ -1,4 +1,6 @@
 let currentIncrement = 0.02;
+let currentTextSize = 16;
+
 let debugMode = true;
 let playerFound = false;
 let currentUrl = document.location.href;
@@ -45,7 +47,7 @@ if (textSizeElement) {
     });
 }
 
-const unmutePlayer = (player) => {
+const unmutePlayer = (player) => { //Will lag on some sites
     //debugMessage("played muted: " + player.muted);
     if (player) {
         if (player.muted) {
@@ -88,11 +90,12 @@ const startVolumeControl = (player) => {
             tooltip.style.display = 'block';
             tooltip.style.left = `${event.clientX}px`;
             tooltip.style.top = `${event.clientY}px`;
+            tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
             tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
                     const newVolume = Math.min(1, player.volume + currentIncrement);
-                    unmutePlayer(player);
+                    //unmutePlayer(player);
                     setVolume(player, newVolume);
                 }
             } else {
@@ -115,6 +118,9 @@ const setVolume = (player, rawVolume) => {
 browser.runtime.onMessage.addListener((message) => {
     if (message.type === "incrementUpdate") {
         currentIncrement = parseFloat(message.increment) || currentIncrement;
+    }
+    if (message.type === "textSizeUpdate") {
+        currentTextSize = message.textSize;
     }
 });
 
