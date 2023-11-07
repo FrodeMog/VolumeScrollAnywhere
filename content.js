@@ -1,6 +1,6 @@
-let currentIncrement = 0.02;
-let currentTextSize = 16;
-let currentExtensionToggle = true;
+let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || 0.02;
+let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || 16;
+let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') === 'true';
 
 let debugMode = true;
 let playerFound = false;
@@ -58,14 +58,14 @@ const startVolumeControl = (player) => {
     player.style.pointerEvents = "none";
 
     const preventScroll = (event) => {
-        if (isMouseOverPlayer(event, player)) {
+        if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
             event.preventDefault();
             event.stopPropagation();
         }
     };
 
     document.addEventListener('wheel', (event) => {
-        if (isMouseOverPlayer(event, player)) {
+        if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
                     const newVolume = Math.min(1, player.volume + currentIncrement);
@@ -101,16 +101,18 @@ const setVolume = (player, rawVolume) => {
 browser.runtime.onMessage.addListener((message) => {
     if (message.type === "incrementUpdate") {
         currentIncrement = parseFloat(message.increment) || currentIncrement;
+        localStorage.setItem('currentIncrement', currentIncrement);
         debugMessage("Increment updated to: " + currentIncrement);
     }
     if (message.type === "textSizeUpdate") {
-        currentTextSize = message.textSize;
+        currentTextSize = parseInt(message.textSize);
+        localStorage.setItem('currentTextSize', currentTextSize);
         debugMessage("Text size updated to: " + currentTextSize);
     }
     if (message.type === "extensionToggleUpdate") {
         currentExtensionToggle = message.extensionToggle;
+        localStorage.setItem('currentExtensionToggle', currentExtensionToggle);
         debugMessage("Extension toggle updated to: " + currentExtensionToggle);
-        
     }
 });
 
@@ -130,8 +132,16 @@ const checkForPlayer = () => {
             }
         }
     } else {
-        playerFound = false;
-        debugMessage("Video player not found.");
+        if (playerFound) {
+            debugMessage("Video player not found. Stopping volume control.");
+            document.removeEventListener('wheel', preventScroll);
+            document.removeEventListener('touchmove', preventScroll);
+            player.style.pointerEvents = "auto";
+            playerFound = false;
+            startObserver();
+        } else {
+            debugMessage("Video player not found.");
+        }
     }
 };
 
