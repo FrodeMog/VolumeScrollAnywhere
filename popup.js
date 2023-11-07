@@ -11,6 +11,8 @@ function updateValue(key, newValue) {
     if (key === "increment") {
         var percentageValue = (newValue * 100).toFixed(0) + "%";
         valueElement.innerText = percentageValue;
+    } else if (key === "textSize") {
+        valueElement.innerText = newValue + "px";
     } else {
         valueElement.innerText = newValue;
     }
