@@ -86,12 +86,6 @@ const startVolumeControl = (player) => {
 
     document.addEventListener('wheel', (event) => {
         if (isMouseOverPlayer(event, player)) {
-            //Show tooltip when scrolling
-            tooltip.style.display = 'block';
-            tooltip.style.left = `${event.clientX}px`;
-            tooltip.style.top = `${event.clientY}px`;
-            tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
-            tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
                     const newVolume = Math.min(1, player.volume + currentIncrement);
@@ -104,6 +98,12 @@ const startVolumeControl = (player) => {
                     setVolume(player, newVolume);
                 }
             }
+        //Show tooltip when scrolling
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${event.clientX}px`;
+        tooltip.style.top = `${event.clientY}px`;
+        tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
+        tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
         }
     });
 };
