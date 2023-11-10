@@ -1,6 +1,6 @@
 let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || 0.02;
 let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || 16;
-let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') === 'true';
+let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false';
 
 let debugMode = true;
 let playerFound = false;
@@ -74,10 +74,11 @@ const startVolumeControl = (player) => {
 
     wheelHandler = (event) => {
         if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
+            player.style.pointerEvents = "none"; // Disable pointer events
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
                     const newVolume = Math.min(1, player.volume + currentIncrement);
-                    //unmutePlayer(player);
+                    unmutePlayer(player);
                     setVolume(player, newVolume);
                 }
             } else {
@@ -97,6 +98,9 @@ const startVolumeControl = (player) => {
             tooltipTimer = setTimeout(() => {
                 tooltip.style.display = 'none';
             }, 1000);
+            setTimeout(() => {
+                player.style.pointerEvents = "auto"; // Re-enable pointer events
+            }, 100);
         }
     };
 
@@ -136,12 +140,12 @@ const checkForPlayer = () => {
     const player = document.querySelector('video');
     if (player) {
         if (!playerFound) {
-            debugMessage("Video player found.", true);
             startVolumeControl(player);
             browser.storage.local.get("increment").then((result) => {
                 currentIncrement = parseFloat(result.increment) || 0.02;
             });
             playerFound = true;
+            debugMessage("Video player found.", true);
             if (observer) {
                 observer.disconnect();
             }
@@ -151,7 +155,9 @@ const checkForPlayer = () => {
             debugMessage("Video player not found. Stopping volume control.");
             document.removeEventListener('wheel', preventScroll);
             document.removeEventListener('touchmove', preventScroll);
-            player.style.pointerEvents = "auto";
+            if (player) { 
+                player.style.pointerEvents = "auto";
+            }
             playerFound = false;
             startObserver();
         } else {
