@@ -18,3 +18,4 @@ To debug or launch the extension, follow these steps:
 5. Some websites or players might not work
 6. Website with multiple players could cause massive issues
 7. Will probably conflict with other similar extensions
+8. UI elements won't update on all players
