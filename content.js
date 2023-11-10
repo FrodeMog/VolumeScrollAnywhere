@@ -210,6 +210,12 @@ function handleWebsiteListUpdate(message) {
     }
 }
 
+function handleWebsiteTabToggleUpdate(message) {
+    currentWebsiteToggle = message.websiteToggle;
+    localStorage.setItem('currentWebsiteToggle', currentWebsiteToggle);
+    debugMessage("Website tab toggle updated to: " + currentWebsiteToggle);
+}
+
 browser.runtime.onMessage.addListener((message) => {
     switch (message.type) {
         case "incrementUpdate":
@@ -226,6 +232,9 @@ browser.runtime.onMessage.addListener((message) => {
             break;
         case "websiteListUpdate":
             handleWebsiteListUpdate(message);
+            break;
+        case "websiteTabToggleUpdate":
+            handleWebsiteTabToggleUpdate(message);
             break;
         default:
             break;

@@ -12,10 +12,10 @@ function updateValue(key, newValue) {
                 // Update the websiteList
                 if (newValue) {
                     // If the toggle is being enabled, add the site to the list
-                    websiteList[site] = false;
+                    websiteList[site] = true;
                 } else {
                     // If the toggle is being disabled, remove the site from the list
-                    websiteList[site] = true;
+                    websiteList[site] = false;
                 }
 
                 // Save the updated websiteList
@@ -23,6 +23,10 @@ function updateValue(key, newValue) {
 
                 // Send a message to content.js to notify it of the updated value
                 browser.tabs.sendMessage(tabs[0].id, { type: `${key}Update`, [key]: newValue, websiteList });
+                browser.storage.local.get("websiteList").then(result => {
+                    const websiteList = result.websiteList;
+                    updateValue("websiteList", websiteList);
+                });
             });
         } 
         // For other keys, just save the new value and send the message
@@ -57,11 +61,6 @@ function saveOptions() {
     var websiteToggle = document.getElementById("websiteToggle").checked;
     var websiteUrlLabel = document.getElementById("websiteUrlLabel").innerText;
 
-    browser.storage.local.get("websiteList").then(result => {
-        const websiteList = result.websiteList;
-        updateValue("websiteList", websiteList);
-    });
-
     updateValue("increment", increment);
     updateValue("textSize", textSize);
     updateValue("extensionToggle", extensionToggle);
@@ -84,7 +83,7 @@ function restoreOptions() {
             let site = url.hostname;
             currentUrlLabel = site;
             if (site in currentWebsiteList) {
-                currentWebsiteToggle = !currentWebsiteList[site];
+                currentWebsiteToggle = currentWebsiteList[site];
             } else {
                 currentWebsiteToggle = true; // set default value to true if website is not in list
             }

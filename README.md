@@ -9,3 +9,8 @@ To debug or launch the extension, follow these steps:
 2. Run `web-ext run` in the terminal to launch the extension or press F5 in VSCode using launch.json.
 3. Run `web-ext build --overwrite-dest --config-discovery` to build - and find the .zip in ***/web-ext-artifacts/***.
 4. `web-ext-config.js` contains the files that are not required to build
+
+
+## Issues
+1. Unmute might cause issues if audio autoplay isn't allowed
+2. 
