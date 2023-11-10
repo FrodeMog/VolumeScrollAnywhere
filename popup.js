@@ -3,7 +3,6 @@ function updateValue(key, newValue) {
     browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
         let url = new URL(tabs[0].url);
         let site = url.hostname;
-        console.log(url)
 
         if (key === "websiteToggle") {
             // Get the current websiteList
@@ -42,6 +41,8 @@ function updateValue(key, newValue) {
                 valueElement.innerText = newValue ? "Enabled" : "Disabled";
             } else if (key === "websiteToggle") {
                 valueElement.innerText = newValue ? "Enabled" : "Disabled";
+            } else if (key === "websiteUrlLabel") {
+                valueElement.innerText = url.host;
             } else {
                 valueElement.innerText = newValue;
             }
@@ -54,6 +55,7 @@ function saveOptions() {
     var textSize = document.getElementById("textSize").value;
     var extensionToggle = document.getElementById("extensionToggle").checked;
     var websiteToggle = document.getElementById("websiteToggle").checked;
+    var websiteUrlLabel = document.getElementById("websiteUrlLabel").innerText;
 
     browser.storage.local.get("websiteList").then(result => {
         const websiteList = result.websiteList;
@@ -64,7 +66,7 @@ function saveOptions() {
     updateValue("textSize", textSize);
     updateValue("extensionToggle", extensionToggle);
     updateValue("websiteToggle", websiteToggle);
-    
+    updateValue("websiteUrlLabel", websiteUrlLabel);
 }
 
 function restoreOptions() {
@@ -74,28 +76,33 @@ function restoreOptions() {
         let currentExtensionToggle = result.extensionToggle === undefined ? true : result.extensionToggle;
         let currentWebsiteToggle = result.websiteToggle === undefined ? false : result.websiteToggle;
         let currentWebsiteList = result.websiteList || {};
+        let currentUrlLabel = result.urlLabel || "";
 
         // Check if the current URL hostname is in the website list
         browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
             let url = new URL(tabs[0].url);
             let site = url.hostname;
-            console.log(url)
+            currentUrlLabel = site;
             if (site in currentWebsiteList) {
                 currentWebsiteToggle = !currentWebsiteList[site];
             }
             document.getElementById("websiteToggle").checked = currentWebsiteToggle;
+            document.getElementById("websiteUrlLabel").innerText = currentUrlLabel;
         });
 
+        
         document.getElementById("increment").value = currentIncrement;
         document.getElementById("textSize").value = currentTextSize;
         document.getElementById("extensionToggle").checked = currentExtensionToggle;
         document.getElementById("websiteList").value = Object.keys(currentWebsiteList).join("\n");
+
 
         updateValue("increment", currentIncrement);
         updateValue("textSize", currentTextSize);
         updateValue("extensionToggle", currentExtensionToggle);
         updateValue("websiteToggle", currentWebsiteToggle);
         updateValue("websiteList", currentWebsiteList);
+        updateValue("websiteUrlLabel", currentUrlLabel);
     }
 
     function onError(error) {
@@ -111,3 +118,4 @@ document.getElementById("textSize").addEventListener("input", saveOptions);
 document.getElementById("extensionToggle").addEventListener("input", saveOptions);
 document.getElementById("websiteToggle").addEventListener("input", saveOptions);
 document.getElementById("websiteList").addEventListener("input", saveOptions);
+document.getElementById("websiteUrlLabel").addEventListener("input", saveOptions);

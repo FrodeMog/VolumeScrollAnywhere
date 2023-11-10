@@ -67,7 +67,7 @@ function isMouseOverPlayer(event, player) {
 function startVolumeControl(player) {
     player.style.pointerEvents = "none";
     const preventScroll = (event) => {
-        if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
+        if (isMouseOverPlayer(event, player) && currentExtensionToggle && currentWebsiteToggle) {
             event.preventDefault();
             event.stopPropagation();
         }
@@ -77,7 +77,7 @@ function startVolumeControl(player) {
         document.removeEventListener('wheel', wheelHandler);
     }
     wheelHandler = (event) => {
-        if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
+        if (isMouseOverPlayer(event, player) && currentExtensionToggle && currentWebsiteToggle) {
             player.style.pointerEvents = "none"; // Disable pointer events
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
