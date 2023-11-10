@@ -204,7 +204,10 @@ function handleWebsiteToggleUpdate(message) {
 function handleWebsiteListUpdate(message) {
     currentWebsiteList = message.websiteList;
     localStorage.setItem('currentWebsiteList', currentWebsiteList);
-    console.log(currentWebsiteList);
+    debugMessage("Website list updated to: " + currentWebsiteList);
+    if(debugMode) {
+        console.log(currentWebsiteList);
+    }
 }
 
 browser.runtime.onMessage.addListener((message) => {

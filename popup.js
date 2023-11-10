@@ -85,6 +85,8 @@ function restoreOptions() {
             currentUrlLabel = site;
             if (site in currentWebsiteList) {
                 currentWebsiteToggle = !currentWebsiteList[site];
+            } else {
+                currentWebsiteToggle = true; // set default value to true if website is not in list
             }
             document.getElementById("websiteToggle").checked = currentWebsiteToggle;
             document.getElementById("websiteUrlLabel").innerText = currentUrlLabel;
