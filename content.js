@@ -1,8 +1,15 @@
-let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || 0.02;
-let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || 16;
-let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false';
+// Constants
+const DEFAULT_INCREMENT = 0.02;
+const DEFAULT_TEXT_SIZE = 16;
+const DEFAULT_EXTENSION_TOGGLE = true;
+const TOOLTIP_DISPLAY_TIME = 1000;
+const TOOLTIP_HIDE_DELAY = 2000;
 
-let debugMode = true;
+// Variables
+let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || DEFAULT_INCREMENT;
+let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || DEFAULT_TEXT_SIZE;
+let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false';
+let debugMode = false;
 let playerFound = false;
 let currentUrl = document.location.href;
 let observer;
@@ -10,41 +17,44 @@ let tooltipTimerStarted = false;
 let tooltipTimer;
 let wheelHandler = null;
 
-const debugMessage = (message, debugModeOverwrite) => {
+// Elements
+const tooltip = createTooltip();
+
+// Event listeners
+document.addEventListener('mousemove', hideTooltip);
+
+// Functions
+function debugMessage(message, debugModeOverwrite = false) {
     if (debugMode || debugModeOverwrite) {
         console.log(`%c[VolumeScrollAnywhere] %c[DEBUG] %c${message}`, 'color: #98ddca; font-weight: bold;', 'color: #2bd9de; font-weight: bold;', 'color: initial;');
     }
-};
+}
 
-// Create a new HTML element to display the text
-const tooltip = document.createElement('div');
-tooltip.style.position = 'fixed';
-tooltip.style.zIndex = '9999';
-tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-tooltip.style.color = 'white';
-tooltip.style.padding = '5px';
-tooltip.style.borderRadius = '5px';
-tooltip.style.display = 'none';
-document.body.appendChild(tooltip);
-
-// Hide the tooltip when the mouse moves
-document.addEventListener('mousemove', () => {
+function createTooltip() {
+    const tooltip = document.createElement('div');
+    tooltip.style.position = 'fixed';
+    tooltip.style.zIndex = '9999';
+    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '5px';
+    tooltip.style.borderRadius = '5px';
     tooltip.style.display = 'none';
-});
+    document.body.appendChild(tooltip);
+    return tooltip;
+}
 
-const unmutePlayer = (player) => { //Will lag on some sites
-    //debugMessage("played muted: " + player.muted);
-    if (player) {
-        if (player.muted) {
-            debugMessage("Unmuting player.", true);
-            player.muted = false;
-        } else {
-            //debugMessage("Player is already unmuted.");
-        }
+function hideTooltip() {
+    tooltip.style.display = 'none';
+}
+
+function unmutePlayer(player) {
+    if (player && player.muted) {
+        debugMessage("Unmuting player.", true);
+        player.muted = false;
     }
-};
+}
 
-const isMouseOverPlayer = (event, player) => {
+function isMouseOverPlayer(event, player) {
     const rect = player.getBoundingClientRect();
     const mouseX = event.clientX;
     const mouseY = event.clientY;
@@ -54,10 +64,9 @@ const isMouseOverPlayer = (event, player) => {
         mouseY >= rect.top &&
         mouseY <= rect.bottom
     );
-};
+}
 
-const startVolumeControl = (player) => {
-    debugMessage("currentextensiontoggle: " + currentExtensionToggle);
+function startVolumeControl(player) {
     player.style.pointerEvents = "none";
 
     const preventScroll = (event) => {
@@ -87,17 +96,15 @@ const startVolumeControl = (player) => {
                     setVolume(player, newVolume);
                 }
             }
-            //Show tooltip when scrolling
+            // Show tooltip when scrolling
             tooltip.style.display = 'block';
             tooltip.style.left = `${event.clientX}px`;
             tooltip.style.top = `${event.clientY}px`;
             tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
             tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
-            // Hide the tooltip after 2 seconds and restart the timer
+            // Hide the tooltip after a delay and restart the timer
             clearTimeout(tooltipTimer);
-            tooltipTimer = setTimeout(() => {
-                tooltip.style.display = 'none';
-            }, 1000);
+            tooltipTimer = setTimeout(hideTooltip, TOOLTIP_DISPLAY_TIME);
             setTimeout(() => {
                 player.style.pointerEvents = "auto"; // Re-enable pointer events
             }, 100);
@@ -108,41 +115,41 @@ const startVolumeControl = (player) => {
     document.addEventListener('wheel', wheelHandler);
     document.addEventListener('wheel', preventScroll, { passive: false });
     document.addEventListener('touchmove', preventScroll, { passive: false });
-};
+}
 
-const setVolume = (player, rawVolume) => {
+function setVolume(player, rawVolume) {
     const volume = Math.round(rawVolume * 100) / 100;
     player.volume = volume;
     const event = new Event('volumechange');
     player.dispatchEvent(event);
-};
+}
 
-browser.runtime.onMessage.addListener((message) => {
-    if (message.type === "incrementUpdate") {
-        currentIncrement = parseFloat(message.increment) || currentIncrement;
-        localStorage.setItem('currentIncrement', currentIncrement);
-        debugMessage("Increment updated to: " + currentIncrement);
-    }
-    if (message.type === "textSizeUpdate") {
-        currentTextSize = parseInt(message.textSize);
-        localStorage.setItem('currentTextSize', currentTextSize);
-        debugMessage("Text size updated to: " + currentTextSize);
-    }
-    if (message.type === "extensionToggleUpdate") {
-        currentExtensionToggle = message.extensionToggle;
-        localStorage.setItem('currentExtensionToggle', currentExtensionToggle);
-        debugMessage("Extension toggle updated to: " + currentExtensionToggle);
-    }
-});
+function handleIncrementUpdate(message) {
+    currentIncrement = parseFloat(message.increment) || DEFAULT_INCREMENT;
+    localStorage.setItem('currentIncrement', currentIncrement);
+    debugMessage("Increment updated to: " + currentIncrement);
+}
 
-const checkForPlayer = () => {
+function handleTextSizeUpdate(message) {
+    currentTextSize = parseInt(message.textSize);
+    localStorage.setItem('currentTextSize', currentTextSize);
+    debugMessage("Text size updated to: " + currentTextSize);
+}
+
+function handleExtensionToggleUpdate(message) {
+    currentExtensionToggle = message.extensionToggle;
+    localStorage.setItem('currentExtensionToggle', currentExtensionToggle);
+    debugMessage("Extension toggle updated to: " + currentExtensionToggle);
+}
+
+function checkForPlayer() {
     debugMessage("Checking for video player...");
     const player = document.querySelector('video');
     if (player) {
         if (!playerFound) {
             startVolumeControl(player);
             browser.storage.local.get("increment").then((result) => {
-                currentIncrement = parseFloat(result.increment) || 0.02;
+                currentIncrement = parseFloat(result.increment) || DEFAULT_INCREMENT;
             });
             playerFound = true;
             debugMessage("Video player found.", true);
@@ -164,9 +171,9 @@ const checkForPlayer = () => {
             debugMessage("Video player not found.");
         }
     }
-};
+}
 
-const startObserver = () => {
+function startObserver() {
     if (observer) {
         observer.disconnect();
     }
@@ -183,9 +190,9 @@ const startObserver = () => {
         }
     });
     observer.observe(document.body, { childList: true, subtree: true });
-};
+}
 
-const checkUrlChange = () => {
+function checkUrlChange() {
     const newUrl = document.location.href;
     if (newUrl !== currentUrl) {
         currentUrl = newUrl;
@@ -193,7 +200,25 @@ const checkUrlChange = () => {
         startObserver();
     }
     requestAnimationFrame(checkUrlChange);
-};
+}
 
+// Event listeners
+browser.runtime.onMessage.addListener((message) => {
+    switch (message.type) {
+        case "incrementUpdate":
+            handleIncrementUpdate(message);
+            break;
+        case "textSizeUpdate":
+            handleTextSizeUpdate(message);
+            break;
+        case "extensionToggleUpdate":
+            handleExtensionToggleUpdate(message);
+            break;
+        default:
+            break;
+    }
+});
+
+// Initialization
 startObserver();
 checkUrlChange();
