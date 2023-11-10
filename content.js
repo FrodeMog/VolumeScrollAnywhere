@@ -6,6 +6,9 @@ let debugMode = true;
 let playerFound = false;
 let currentUrl = document.location.href;
 let observer;
+let tooltipTimerStarted = false;
+let tooltipTimer;
+let wheelHandler = null;
 
 const debugMessage = (message, debugModeOverwrite) => {
     if (debugMode || debugModeOverwrite) {
@@ -17,7 +20,7 @@ const debugMessage = (message, debugModeOverwrite) => {
 const tooltip = document.createElement('div');
 tooltip.style.position = 'fixed';
 tooltip.style.zIndex = '9999';
-tooltip.style.backgroundColor = 'black';
+tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
 tooltip.style.color = 'white';
 tooltip.style.padding = '5px';
 tooltip.style.borderRadius = '5px';
@@ -64,7 +67,12 @@ const startVolumeControl = (player) => {
         }
     };
 
-    document.addEventListener('wheel', (event) => {
+    // Remove existing listeners
+    if (wheelHandler !== null) {
+        document.removeEventListener('wheel', wheelHandler);
+    }
+
+    wheelHandler = (event) => {
         if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
             if (event.deltaY < 0) {
                 if (player.volume < 1) {
@@ -84,9 +92,16 @@ const startVolumeControl = (player) => {
             tooltip.style.top = `${event.clientY}px`;
             tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
             tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
+            // Hide the tooltip after 2 seconds and restart the timer
+            clearTimeout(tooltipTimer);
+            tooltipTimer = setTimeout(() => {
+                tooltip.style.display = 'none';
+            }, 1000);
         }
-    });
+    };
 
+    // Add listeners
+    document.addEventListener('wheel', wheelHandler);
     document.addEventListener('wheel', preventScroll, { passive: false });
     document.addEventListener('touchmove', preventScroll, { passive: false });
 };
