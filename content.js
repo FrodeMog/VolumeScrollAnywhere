@@ -1,11 +1,9 @@
-// Constants
 const DEFAULT_INCREMENT = 0.02;
 const DEFAULT_TEXT_SIZE = 16;
 const DEFAULT_EXTENSION_TOGGLE = true;
 const TOOLTIP_DISPLAY_TIME = 1000;
 const TOOLTIP_HIDE_DELAY = 2000;
 
-// Variables
 let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || DEFAULT_INCREMENT;
 let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || DEFAULT_TEXT_SIZE;
 let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false';
@@ -17,13 +15,10 @@ let tooltipTimerStarted = false;
 let tooltipTimer;
 let wheelHandler = null;
 
-// Elements
 const tooltip = createTooltip();
 
-// Event listeners
 document.addEventListener('mousemove', hideTooltip);
 
-// Functions
 function debugMessage(message, debugModeOverwrite = false) {
     if (debugMode || debugModeOverwrite) {
         console.log(`%c[VolumeScrollAnywhere] %c[DEBUG] %c${message}`, 'color: #98ddca; font-weight: bold;', 'color: #2bd9de; font-weight: bold;', 'color: initial;');
@@ -68,19 +63,16 @@ function isMouseOverPlayer(event, player) {
 
 function startVolumeControl(player) {
     player.style.pointerEvents = "none";
-
     const preventScroll = (event) => {
         if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
             event.preventDefault();
             event.stopPropagation();
         }
     };
-
     // Remove existing listeners
     if (wheelHandler !== null) {
         document.removeEventListener('wheel', wheelHandler);
     }
-
     wheelHandler = (event) => {
         if (isMouseOverPlayer(event, player) && currentExtensionToggle) {
             player.style.pointerEvents = "none"; // Disable pointer events
@@ -100,7 +92,7 @@ function startVolumeControl(player) {
             tooltip.style.display = 'block';
             tooltip.style.left = `${event.clientX}px`;
             tooltip.style.top = `${event.clientY}px`;
-            tooltip.style.fontSize = `${currentTextSize}px`; // Set font size based on currentTextSize
+            tooltip.style.fontSize = `${currentTextSize}px`;
             tooltip.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
             // Hide the tooltip after a delay and restart the timer
             clearTimeout(tooltipTimer);
@@ -110,8 +102,6 @@ function startVolumeControl(player) {
             }, 100);
         }
     };
-
-    // Add listeners
     document.addEventListener('wheel', wheelHandler);
     document.addEventListener('wheel', preventScroll, { passive: false });
     document.addEventListener('touchmove', preventScroll, { passive: false });
@@ -122,24 +112,6 @@ function setVolume(player, rawVolume) {
     player.volume = volume;
     const event = new Event('volumechange');
     player.dispatchEvent(event);
-}
-
-function handleIncrementUpdate(message) {
-    currentIncrement = parseFloat(message.increment) || DEFAULT_INCREMENT;
-    localStorage.setItem('currentIncrement', currentIncrement);
-    debugMessage("Increment updated to: " + currentIncrement);
-}
-
-function handleTextSizeUpdate(message) {
-    currentTextSize = parseInt(message.textSize);
-    localStorage.setItem('currentTextSize', currentTextSize);
-    debugMessage("Text size updated to: " + currentTextSize);
-}
-
-function handleExtensionToggleUpdate(message) {
-    currentExtensionToggle = message.extensionToggle;
-    localStorage.setItem('currentExtensionToggle', currentExtensionToggle);
-    debugMessage("Extension toggle updated to: " + currentExtensionToggle);
 }
 
 function checkForPlayer() {
@@ -202,7 +174,24 @@ function checkUrlChange() {
     requestAnimationFrame(checkUrlChange);
 }
 
-// Event listeners
+function handleIncrementUpdate(message) {
+    currentIncrement = parseFloat(message.increment) || DEFAULT_INCREMENT;
+    localStorage.setItem('currentIncrement', currentIncrement);
+    debugMessage("Increment updated to: " + currentIncrement);
+}
+
+function handleTextSizeUpdate(message) {
+    currentTextSize = parseInt(message.textSize);
+    localStorage.setItem('currentTextSize', currentTextSize);
+    debugMessage("Text size updated to: " + currentTextSize);
+}
+
+function handleExtensionToggleUpdate(message) {
+    currentExtensionToggle = message.extensionToggle;
+    localStorage.setItem('currentExtensionToggle', currentExtensionToggle);
+    debugMessage("Extension toggle updated to: " + currentExtensionToggle);
+}
+
 browser.runtime.onMessage.addListener((message) => {
     switch (message.type) {
         case "incrementUpdate":
@@ -219,6 +208,5 @@ browser.runtime.onMessage.addListener((message) => {
     }
 });
 
-// Initialization
 startObserver();
 checkUrlChange();
