@@ -20,3 +20,4 @@ To debug or launch the extension, follow these steps:
 7. Will probably conflict with other similar extensions
 8. UI elements won't update on all players
 9. Default websiteToggle is false if activated through changing tabs
+10. Correct textSize and increment aren't loaded on restoreOptions
