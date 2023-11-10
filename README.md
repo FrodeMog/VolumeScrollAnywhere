@@ -17,3 +17,4 @@ To debug or launch the extension, follow these steps:
 4. A popup before a player launch could avoid player search
 5. Some websites or players might not work
 6. Website with multiple players could cause massive issues
+7. Will probably conflict with other similar extensions
