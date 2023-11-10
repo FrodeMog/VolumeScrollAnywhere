@@ -13,4 +13,7 @@ To debug or launch the extension, follow these steps:
 
 ## Issues
 1. Unmute might cause issues if audio autoplay isn't allowed
-2. 
+3. If a player is refreshed or reloaded by a website the script won't re-search
+4. A popup before a player launch could avoid player search
+5. Some websites or players might not work
+6. Website with multiple players could cause massive issues
