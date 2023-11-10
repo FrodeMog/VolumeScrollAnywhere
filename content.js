@@ -6,8 +6,10 @@ const TOOLTIP_HIDE_DELAY = 2000;
 
 let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || DEFAULT_INCREMENT;
 let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || DEFAULT_TEXT_SIZE;
-let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false';
-let debugMode = false;
+let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false'
+let currentWebsiteToggle = localStorage.getItem('currentWebsiteToggle') !== 'false'
+
+let debugMode = true;
 let playerFound = false;
 let currentUrl = document.location.href;
 let observer;
@@ -192,6 +194,12 @@ function handleExtensionToggleUpdate(message) {
     debugMessage("Extension toggle updated to: " + currentExtensionToggle);
 }
 
+function handleWebsiteToggleUpdate(message) {
+    currentWebsiteToggle = message.websiteToggle;
+    localStorage.setItem('currentWebsiteToggle', currentWebsiteToggle);
+    debugMessage("Website toggle updated to: " + currentWebsiteToggle);
+}
+
 browser.runtime.onMessage.addListener((message) => {
     switch (message.type) {
         case "incrementUpdate":
@@ -202,6 +210,9 @@ browser.runtime.onMessage.addListener((message) => {
             break;
         case "extensionToggleUpdate":
             handleExtensionToggleUpdate(message);
+            break;
+        case "websiteToggleUpdate":
+            handleWebsiteToggleUpdate(message);
             break;
         default:
             break;

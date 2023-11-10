@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Volume Scroll Anywhere",
     "version": "0.1",
-    "description": "An extension that allows controlling audio with the mouse wheel on any video player.",
+    "description": "An extension that allows controlling volume with the mouse wheel on any video player.",
     "permissions": ["activeTab", "tabs", "storage"],
     "icons": {
       "16": "icons/icon16.png",
