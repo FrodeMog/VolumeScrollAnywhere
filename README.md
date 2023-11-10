@@ -13,11 +13,11 @@ To debug or launch the extension, follow these steps:
 
 ## Issues
 1. Unmute might cause issues if audio autoplay isn't allowed
-3. If a player is refreshed or reloaded by a website the script won't re-search
-4. A popup before a player launch could avoid player search
-5. Some websites or players might not work
-6. Website with multiple players could cause massive issues
-7. Will probably conflict with other similar extensions
-8. UI elements won't update on all players
-9. Default websiteToggle is false if activated through changing tabs
-10. Correct textSize and increment aren't loaded on restoreOptions
+2. If a player is refreshed or reloaded by a website the script won't re-search
+3. A popup before a player launch could avoid player search
+4. Some websites or players might not work
+5. Website with multiple players could cause massive issues
+6. Will probably conflict with other similar extensions
+7. UI elements won't update on all players
+8. Default websiteToggle is false if activated through changing tabs
+9. Correct textSize and increment aren't loaded on restoreOptions
