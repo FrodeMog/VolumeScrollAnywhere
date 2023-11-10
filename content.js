@@ -8,6 +8,7 @@ let currentIncrement = parseFloat(localStorage.getItem('currentIncrement')) || D
 let currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || DEFAULT_TEXT_SIZE;
 let currentExtensionToggle = localStorage.getItem('currentExtensionToggle') !== 'false'
 let currentWebsiteToggle = localStorage.getItem('currentWebsiteToggle') !== 'false'
+let currentWebsiteList = localStorage.getItem('currentWebsiteList') || '';
 
 let debugMode = true;
 let playerFound = false;
@@ -200,6 +201,12 @@ function handleWebsiteToggleUpdate(message) {
     debugMessage("Website toggle updated to: " + currentWebsiteToggle);
 }
 
+function handleWebsiteListUpdate(message) {
+    currentWebsiteList = message.websiteList;
+    localStorage.setItem('currentWebsiteList', currentWebsiteList);
+    console.log(currentWebsiteList);
+}
+
 browser.runtime.onMessage.addListener((message) => {
     switch (message.type) {
         case "incrementUpdate":
@@ -213,6 +220,9 @@ browser.runtime.onMessage.addListener((message) => {
             break;
         case "websiteToggleUpdate":
             handleWebsiteToggleUpdate(message);
+            break;
+        case "websiteListUpdate":
+            handleWebsiteListUpdate(message);
             break;
         default:
             break;
