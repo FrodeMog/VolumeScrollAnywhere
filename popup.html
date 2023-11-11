@@ -8,54 +8,58 @@
 </head>
 
 <body>
-    <h1 style="text-align: center;">Volume Scroll Anywhere</h1>
+    <div style="background-color: #ffffff; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0px 0px 10px #b9b9b9;">
+        <h1 style="text-align: left; margin: 0;">Volume Scroll Anywhere</h1>
+        <a href="https://github.com/FrodeMog/VolumeScrollAnywhere" style="margin-left: 10px;">
+            <img src="extra-icons/github-icon.svg" alt="GitHub" width="32" height="32">
+        </a>
+    </div>
+    <div style="height: 6px;"></div>
     <form>
-        <div style="text-align:center;">
+        <div class="box">
             <label for="increment">Volume scroll amount</label>
             <input type="range" id="increment" name="increment" min="0.001" max="0.25" step="0.001" value="0.02"
                 oninput="updateValue(this.id, this.value)">
             <span id="incrementValue">2%</span>
         </div>
     </form>
-    <hr>
+    <div style="height: 2px;"></div>
     <form>
-        <div style="text-align:center;">
+        <div class="box">
             <label for="textSize">Text size</label>
             <input type="range" id="textSize" name="textSize" min="10" max="50" step="1" value="16"
                 oninput="updateTextSize(this.id, this.value)">
             <span id="textSizeValue">16px</span>
         </div>
     </form>
-    <hr>
-    <form>
-        <div style="text-align:center;">
-            <label for="extensionToggle">Extension toggle</label>
-            <label class="switch">
-                <input type="checkbox" id="extensionToggle" name="extensionToggle" value="true" onchange="updateToggle(this.id, this.checked)">
-                <span class="slider round"></span>
-            </label>
-        </div>
-    </form>
-    <hr>
-    <form>
-        <div style="text-align:center;">
-            <label for="websiteToggle">Website toggle</label>
-            <label class="switch">
-                <input type="checkbox" id="websiteToggle" name="websiteToggle" value="true" onchange="updateToggle(this.id, this.checked)">
-                <span class="slider round"></span>
-            </label>
-            <br>
-            <label for="websiteUrl"></label>
-            <span id="websiteUrlLabel" onchange="updateLabelUrlLabel(this.id, this.value)">example.com</span>
-        </div>
-    </form>
-    <script src="popup.js"></script>
-</body>
+    <div style="height: 3px;"></div>
+    <div style="display: flex;">
+        <form style="flex: 1;">
+            <div class="togglebox">
+                <label for="extensionToggle">Extension</label>
+                <label class="switch">
+                    <input type="checkbox" id="extensionToggle" name="extensionToggle" value="true"
+                        onchange="updateToggle(this.id, this.checked)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </form>
 
-</html>
-            
-        </div>
-    </form>
+        <form style="flex: 1;">
+            <div class="togglebox">
+                <label for="websiteToggle">Website</label>
+                <label class="switch">
+                    <input type="checkbox" id="websiteToggle" name="websiteToggle" value="true"
+                        onchange="updateToggle(this.id, this.checked)">
+                    <span class="slider round"></span>
+                </label>
+                <br>
+                <label for="websiteUrl"></label>
+                <span id="websiteUrlLabel" onchange="updateLabelUrlLabel(this.id, this.value)">example.com</span>
+            </div>
+        </form>
+    </div>
+    
     <script src="popup.js"></script>
 </body>
 
