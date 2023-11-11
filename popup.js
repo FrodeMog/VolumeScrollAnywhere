@@ -54,18 +54,14 @@ function updateValue(key, newValue) {
     });
 }
 
-function saveOptions() {
-    var increment = document.getElementById("increment").value;
-    var textSize = document.getElementById("textSize").value;
-    var extensionToggle = document.getElementById("extensionToggle").checked;
-    var websiteToggle = document.getElementById("websiteToggle").checked;
-    var websiteUrlLabel = document.getElementById("websiteUrlLabel").innerText;
-
-    updateValue("increment", increment);
-    updateValue("textSize", textSize);
-    updateValue("extensionToggle", extensionToggle);
-    updateValue("websiteToggle", websiteToggle);
-    updateValue("websiteUrlLabel", websiteUrlLabel);
+function saveOptions(key) {
+    var value;
+    if (key === "extensionToggle" || key === "websiteToggle") {
+        value = document.getElementById(key).checked;
+    } else {
+        value = document.getElementById(key).value;
+    }
+    updateValue(key, value);
 }
 
 function restoreOptions() {
@@ -114,8 +110,10 @@ function restoreOptions() {
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById("increment").addEventListener("input", saveOptions);
-document.getElementById("textSize").addEventListener("input", saveOptions);
-document.getElementById("extensionToggle").addEventListener("input", saveOptions);
-document.getElementById("websiteToggle").addEventListener("input", saveOptions);
-document.getElementById("websiteUrlLabel").addEventListener("input", saveOptions);
+
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.getElementById("increment").addEventListener("input", function() { saveOptions("increment"); });
+document.getElementById("textSize").addEventListener("input", function() { saveOptions("textSize"); });
+document.getElementById("extensionToggle").addEventListener("input", function() { saveOptions("extensionToggle"); });
+document.getElementById("websiteToggle").addEventListener("input", function() { saveOptions("websiteToggle"); });
+document.getElementById("websiteUrlLabel").addEventListener("input", function() { saveOptions("websiteUrlLabel"); });
