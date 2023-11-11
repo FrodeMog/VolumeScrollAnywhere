@@ -12,9 +12,9 @@ To debug or launch the extension, follow these steps:
 
 
 ## Issues
-1. Unmute might cause issues if audio autoplay isn't allowed
+1. Unmute might cause issues if audio autoplay isn't allowed in firefox settings
 2. If a player is refreshed or reloaded by a website the script won't re-search
-3. A popup before a player launch could avoid player search
+3. A popup before a player launch could avoid player being found
 4. Some websites or players might not work
 5. Website with multiple players could cause issues
 6. Will probably conflict with other similar extensions
