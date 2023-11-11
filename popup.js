@@ -95,7 +95,7 @@ function restoreOptions() {
         document.getElementById("increment").value = currentIncrement;
         document.getElementById("textSize").value = currentTextSize;
         document.getElementById("extensionToggle").checked = currentExtensionToggle;
-        document.getElementById("websiteList").value = Object.keys(currentWebsiteList).join("\n");
+        //document.getElementById("websiteList").value = Object.keys(currentWebsiteList).join("\n");
 
 
         updateValue("increment", currentIncrement);
@@ -118,5 +118,4 @@ document.getElementById("increment").addEventListener("input", saveOptions);
 document.getElementById("textSize").addEventListener("input", saveOptions);
 document.getElementById("extensionToggle").addEventListener("input", saveOptions);
 document.getElementById("websiteToggle").addEventListener("input", saveOptions);
-document.getElementById("websiteList").addEventListener("input", saveOptions);
 document.getElementById("websiteUrlLabel").addEventListener("input", saveOptions);

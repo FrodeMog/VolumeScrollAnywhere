@@ -16,6 +16,5 @@ To debug or launch the extension, follow these steps:
 2. If a player is refreshed or reloaded by a website the script won't re-search
 3. A popup before a player launch could avoid player search
 4. Some websites or players might not work
-5. Website with multiple players could cause massive issues
+5. Website with multiple players could cause issues
 6. Will probably conflict with other similar extensions
-8. Correct textSize and increment aren't loaded on restoreOptions
