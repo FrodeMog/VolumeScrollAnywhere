@@ -117,35 +117,36 @@ function setVolume(player, rawVolume) {
     player.dispatchEvent(event);
 }
 
-function checkForPlayer() {
-    debugMessage("Checking for video player...");
-    const player = document.querySelector('video');
-    if (player) {
-        if (!playerFound) {
-            startVolumeControl(player);
-            browser.storage.local.get("increment").then((result) => {
-                currentIncrement = parseFloat(result.increment) || DEFAULT_INCREMENT;
-            });
-            playerFound = true;
-            debugMessage("Video player found.", true);
-            if (observer) {
-                observer.disconnect();
+function checkForPlayer(players) {
+    debugMessage("Setting up player volume control.");
+    players.forEach(player => {
+        if (player) {
+            if (!playerFound) {
+                startVolumeControl(player);
+                browser.storage.local.get("increment").then((result) => {
+                    currentIncrement = parseFloat(result.increment) || DEFAULT_INCREMENT;
+                });
+                playerFound = true;
+                debugMessage("Video player found.", true);
+                if (observer) {
+                    observer.disconnect();
+                }
             }
-        }
-    } else {
-        if (playerFound) {
-            debugMessage("Video player not found. Stopping volume control.");
-            document.removeEventListener('wheel', preventScroll);
-            document.removeEventListener('touchmove', preventScroll);
-            if (player) { 
-                player.style.pointerEvents = "auto";
-            }
-            playerFound = false;
-            startObserver();
         } else {
-            debugMessage("Video player not found.");
+            if (playerFound) {
+                debugMessage("Video player not found. Stopping volume control.");
+                document.removeEventListener('wheel', preventScroll);
+                document.removeEventListener('touchmove', preventScroll);
+                if (player) { 
+                    player.style.pointerEvents = "auto";
+                }
+                playerFound = false;
+                startObserver();
+            } else {
+                debugMessage("Video player not found.");
+            }
         }
-    }
+    });
 }
 
 function startObserver() {
@@ -160,7 +161,11 @@ function startObserver() {
                 mutation.target.nodeName.toLowerCase() !== 'script'
             ) {
                 debugMessage("Mutation detected. Checking for player.");
-                checkForPlayer();
+                let players = Array.from(document.querySelectorAll('video'));
+                /* Maybe we can concat different video player types here?
+                players = players.concat(Array.from(document.querySelectorAll('video-example')));
+                */
+                checkForPlayer(players);
             }
         }
     });
