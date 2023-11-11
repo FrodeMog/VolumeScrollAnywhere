@@ -9,7 +9,7 @@ browser.tabs.onActivated.addListener(async (activeInfo) => {
     let websiteList = result.websiteList || {};
 
     // Determine the new websiteToggle value
-    let websiteToggle = websiteList[site] || false;
+    let websiteToggle = websiteList[site] !== undefined ? websiteList[site] : true;
 
     // Send the websiteToggle value to the content script
     browser.tabs.sendMessage(activeInfo.tabId, { type: "websiteTabToggleUpdate", websiteToggle });
