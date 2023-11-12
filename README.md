@@ -18,3 +18,6 @@ To debug or launch the extension, follow these steps:
 4. Some websites or players might not work
 5. Website with multiple players could cause issues
 6. Will probably conflict with other similar extensions
+
+## Extra
+![alt text](/ReadmeImages/app.png)
