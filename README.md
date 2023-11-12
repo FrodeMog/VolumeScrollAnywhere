@@ -19,5 +19,9 @@ To debug or launch the extension, follow these steps:
 5. Website with multiple players could cause issues
 6. Will probably conflict with other similar extensions
 
+## TODO
+1. Handle settings better with settings-object in background.js
+2. Add support for special video-player objects from popular sites
+
 ## Extra
 ![alt text](/ReadmeImages/app.png)
