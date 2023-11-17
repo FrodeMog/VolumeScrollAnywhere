@@ -52,10 +52,33 @@ function unmutePlayer(player) {
     }
 }
 
+let getVideo = function (event) {
+    let elements = document.elementsFromPoint(event.clientX, event.clientY);
+    debugMessage(elements);
+    for (const element of elements) {
+        if (element.tagName === "VIDEO") {
+            return { display: element, video: element, slider: null };
+        }
+        else if (element.tagName === "SHREDDIT-PLAYER"){
+            let video = element.shadowRoot.querySelector("VIDEO");
+            let slider = element.shadowRoot.querySelector("VDS-VOLUME-SLIDER")
+            return { display: element, video: video, slider: slider };
+        }
+        else if (element.tagName === "YTMUSIC-PLAYER" || element.tagName === "YTMUSIC-PLAYER-BAR") {
+            let video = document.getElementsByTagName("VIDEO")[0];
+            let display = document.getElementById("song-image");
+            let slider = document.getElementById("volume-slider");
+            return { display: display, video: video, slider: slider };
+        }
+    }
+    return null;
+}
+
 function isMouseOverPlayer(event, player) {
     const rect = player.getBoundingClientRect();
     const mouseX = event.clientX;
     const mouseY = event.clientY;
+    getVideo(event);
     return (
         mouseX >= rect.left &&
         mouseX <= rect.right &&
@@ -162,9 +185,6 @@ function startObserver() {
             ) {
                 debugMessage("Mutation detected. Checking for player.");
                 let players = Array.from(document.querySelectorAll('video'));
-                /* Maybe we can concat different video player types here?
-                players = players.concat(Array.from(document.querySelectorAll('video-example')));
-                */
                 checkForPlayer(players);
             }
         }
